@@ -72,6 +72,18 @@ ls.o : ls.c ../include/type.h ../include/stdio.h
 ls : ls.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
 
+ps.o: ps.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+ps : ps.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+kill.o: kill.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+kill : kill.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
 str.o: str.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
