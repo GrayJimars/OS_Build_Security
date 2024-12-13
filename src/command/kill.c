@@ -1,30 +1,25 @@
 #include "stdio.h"
 
 int main(int argc, char* argv[]) {
-    struct proc* p = &proc_table[pid];
+    if (argc < 2) {
+        printf("kill [error]: you should use kill as following format:\n");
+        printf("\tkill [pid]\n");
+    } else {
 
-    if (p->p_flags & FREE_SLOT) {
-        disp_color_str("Error: Process not found.\n", MAKE_COLOR(RED, BLACK));
-        return;
+        if (kill(atoi(argv[1])) != 0) {
+            printf("Failed to kill %s!\n", argv[1]);
+            return 0;
+        } else {
+            printf("Successfully kill %s!\n", argv[1]);
+        }
     }
+    return 0;
+}
 
-    // 如果进程正在发送或接收消息，先取消这些操作
-    if (p->p_flags & SENDING) {
-        p->p_flags &= ~SENDING;  // 清除发送标志
-        disp_color_str("Process is sending, operation canceled.\n", MAKE_COLOR(YELLOW, BLACK));
-    } else if (p->p_flags & RECEIVING) {
-        p->p_flags &= ~RECEIVING;  // 清除接收标志
-        disp_color_str("Process is receiving, operation canceled.\n", MAKE_COLOR(YELLOW, BLACK));
+int atoi(char* str) {
+    int result = 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        result = result * 10 + str[i] - '0';
     }
-
-    // 如果进程正在等待子进程退出，则设置为HANGING状态
-    if (p->p_flags & WAITING) {
-        p->p_flags &= ~WAITING;
-        p->p_flags |= HANGING;
-        disp_color_str("Process is waiting for a child to exit, now in HANGING state.\n", MAKE_COLOR(RED, BLACK));
-    }
-
-    // 设置进程为FREE_SLOT状态，表示其已被终止
-    p->p_flags = FREE_SLOT;
-    disp_color_str("Process terminated successfully.\n", MAKE_COLOR(GREEN, BLACK));
+    return result;
 }
