@@ -12,7 +12,7 @@ CFLAGS		= -I ../include/ -c -fno-builtin -fno-stack-protector -Wall -I ../includ
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd rm touch ls str atk poc
+BIN		= echo pwd rm touch ls str atk poc ps kill cat cover
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
@@ -23,7 +23,7 @@ everything : $(BIN)
 install : all clean
 	cp ../boot/hd*.bin ./ -v
 	cp ../kernel.bin ./ -v
-	tar vcf inst.tar kernel.bin $(BIN) hd*.bin
+	tar vcf inst.tar $(BIN) # kernel.bin hd*.bin
 	dd if=inst.tar of=$(HD) seek=`echo "obase=10;ibase=16;(\`egrep -e '^ROOT_BASE' ../boot/include/load.inc | sed -e 's/.*0x//g'\`+\`egrep -e '#define[[:space:]]*INSTALL_START_SECT' ../include/sys/config.h | sed -e 's/.*0x//g'\`)*200" | bc` bs=1 count=`ls -l inst.tar | awk -F " " '{print $$5}'` conv=notrunc
 
 all : realclean everything
@@ -72,18 +72,6 @@ ls.o : ls.c ../include/type.h ../include/stdio.h
 ls : ls.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
 
-ps.o: ps.c ../include/type.h ../include/stdio.h
-	$(CC) $(CFLAGS) -o $@ $<
-
-ps : ps.o start.o $(LIB)
-	$(LD) $(LDFLAGS) -o $@ $?
-
-kill.o: kill.c ../include/type.h ../include/stdio.h
-	$(CC) $(CFLAGS) -o $@ $<
-
-kill : kill.o start.o $(LIB)
-	$(LD) $(LDFLAGS) -o $@ $?
-
 str.o: str.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
@@ -100,4 +88,28 @@ poc.o: poc.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 poc : poc.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+ps.o: ps.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+ps : ps.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+kill.o: kill.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+kill : kill.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+cat.o: cat.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+cat : cat.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+cover.o: cover.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+cover : cover.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?

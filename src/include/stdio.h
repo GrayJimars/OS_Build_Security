@@ -129,6 +129,7 @@ PUBLIC	int	unlink		(const char *pathname);
 
 /* lib/getpid.c */
 PUBLIC int	getpid		();
+PUBLIC struct proc * getpaddr	();
 
 /* lib/fork.c */
 PUBLIC int	fork		();
@@ -152,11 +153,5 @@ PUBLIC	int	syslog		(const char *fmt, ...);
 
 /* lib/search.c */
 PUBLIC 	char*	search	(char* path);
-
-/* lib/search.c */
-PUBLIC 	int	ps			();
-
-/* lib/kill.c */
-PUBLIC 	int	kill		(int pid);
 
 #endif /* _ORANGES_STDIO_H_ */

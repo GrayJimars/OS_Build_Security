@@ -13,11 +13,10 @@ int strncmp(char* a, char* b, int n) {
 }
 
 int is_elf(Elf32_Ehdr elf_ehdr) {
-    // ELF文件头部的 e_ident 为 "0x7fELF"
     if ((strncmp(elf_ehdr.e_ident, ELFMAG, SELFMAG)) == 0)
-        return 1;  // 是
+        return 1;
     else
-        return 0;  // 不是
+        return 0;
 }
 
 void cal_addr(int entry, int addr[]) {

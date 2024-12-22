@@ -65,5 +65,5 @@ extern	const int		LOGDISKBUF_SIZE;
 
 PUBLIC struct s_queue queue[3];
 
-#define STATIC_CHECK 1
-#define DYNAMIC_CHECK 1
+#define STATIC_CHECK 0
+#define DYNAMIC_CHECK 0

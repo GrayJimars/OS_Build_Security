@@ -379,145 +379,221 @@ struct command
 	int argc;
 	char *argv[PROC_ORIGIN_STACK];
 };
-void shabby_shell(const char *tty_name)
-{
-	int fd_stdin = open(tty_name, O_RDWR);
-	assert(fd_stdin == 0);
-	int fd_stdout = open(tty_name, O_RDWR);
-	assert(fd_stdout == 1);
+int int_to_str(int num, char *str) {
+    int i = 0, j, temp;
+    int is_negative = 0;
 
-	char rdbuf[128];
-	// printf("-----arrive shabby_shell-----\n");
+    if (num == 0) {
+        str[i++] = '0';
+        str[i] = '\0';
+        return i;
+    }
 
-	while (1)
-	{
-		write(1, "$ ", 2);
-		int r = read(0, rdbuf, 70);
-		rdbuf[r] = 0;
+    if (num < 0) {
+        is_negative = 1;
+        num = -num;
+    }
 
-		int argc = 0;
-		char *argv[PROC_ORIGIN_STACK];
-		char *p = rdbuf;
-		char *s;
-		int word = 0;
-		char ch;
-		do
-		{
-			ch = *p;
-			if (*p != ' ' && *p != 0 && !word)
-			{
-				s = p;
-				word = 1;
-			}
-			if ((*p == ' ' || *p == 0) && word)
-			{
-				word = 0;
-				argv[argc++] = s;
-				*p = 0;
-			}
-			p++;
-		} while (ch);
-		argv[argc] = 0;
+    // 处理每一位数字
+    while (num > 0) {
+        str[i++] = (num % 10) + '0';
+        num /= 10;
+    }
 
-		// argc and argv has been processed over
-		// now continue parse the command
+    if (is_negative) {
+        str[i++] = '-';
+    }
 
-		int count = 1;
-		int pointer[PROC_ORIGIN_STACK] = {0};
-		for (int i = 1; i < argc; i++)
-		{
-			if (argv[i][0] == '&')
-			{
-				pointer[count] = i + 1;
-				count++;
-			}
-		}
-		if (count == 1)
-		{
-			int fd = open(argv[0], O_RDWR);
-			if (fd == -1)
-			{
-				if (rdbuf[0])
-				{
-					write(1, "{", 1);
-					write(1, rdbuf, r);
-					write(1, "}\n", 2);
-				}
-			}
-			else
-			{
-				close(fd);
-				int pid = fork();
-				if (pid != 0)
-				{ /* parent */
-					int s;
-					wait(&s);
-				}
-				else
-				{ /* child */
-					execv(argv[0], argv);
-				}
-			}
-		}
-		else
-		{
-			struct command cmd[count];
-			for (int i = 0; i < count; i++)
-			{
-				// printf("now is %d\n", i);
-				cmd[i].argc = 0;
-				for (int j = pointer[i]; (i != count - 1 && argv[j][0] != '&') || (i == count - 1 && j < argc); j++)
-				{
-					cmd[i].argv[cmd[i].argc] = argv[j];
-					/*
-					if (i == count - 1) {
-						printf("argv[%d] = %s\n", cmd[i].argc, argv[j]);
-					}
-					*/
-					cmd[i].argc++;
-				}
-				/*
-				if (i == count - 1) {
-					printf("cmd[1].argc = %d\n", cmd[i].argc);
-				}
-				*/
-				cmd[i].argv[cmd[i].argc] = 0;
-				int fd = open(cmd[i].argv[0], O_RDWR);
-				if (fd == -1)
-				{
-					if (rdbuf[0])
-					{
-						printf("{%s}\n", rdbuf);
-					}
-					break;
-				}
-				else
-				{
-					close(fd);
-					int pid = fork();
-					if (pid != 0)
-					{ /* parent */
-						int s;
-						wait(&s);
-					}
-					else
-					{ /* child */
-						if((!STATIC_CHECK) || check_valid(cmd[i].argc, cmd[i].argv) == 1)
-						{
-							execv(cmd[i].argv[0], cmd[i].argv);
-						} else {
-							printf("%s is not valid\n", cmd[i].argv[0]);
-						}
-					}
-				}
-			}
-		}
-	}
+    // 反转字符串
+    for (j = 0; j < i / 2; j++) {
+        temp = str[j];
+        str[j] = str[i - j - 1];
+        str[i - j - 1] = temp;
+    }
 
-	close(1);
-	close(0);
+    str[i] = '\0';
+    return i;
 }
 
+void shabby_shell(const char *tty_name)
+{
+    // 打开TTY作为标准输入和输出
+    int fd_stdin = open(tty_name, O_RDWR);
+    assert(fd_stdin == 0);
+    int fd_stdout = open(tty_name, O_RDWR);
+    assert(fd_stdout == 1);
+
+    char rdbuf[128];
+
+    while (1)
+    {
+        // 显示提示符
+        write(1, "$ ", 2);
+
+        // 读取输入
+        int r = read(0, rdbuf, sizeof(rdbuf) - 1);
+        if (r <= 0)
+            continue; // 读取失败或EOF，重新循环
+        rdbuf[r] = 0; // 确保字符串结束
+
+        // 调试信息：显示读取的原始输入
+        write(1, "Debug: origin: ", 15);
+        write(1, rdbuf, r);
+        write(1, "\n", 1);
+
+        // 初始化命令列表
+        struct command cmd_list[8];
+        int cmd_count = 0;
+        cmd_list[cmd_count].argc = 0;
+
+        char *p = rdbuf;
+        char *s = 0;
+        int word = 0;
+
+        // 一次遍历解析命令和参数，按‘&’分隔命令
+        while (*p)
+        {
+            if (*p != ' ' && *p != '&' && !word)
+            {
+                s = p; // 记录参数开始位置
+                word = 1;
+
+                // 调试信息：检测到新参数的开始
+                write(1, "Debug: arg start: ", 18);
+                write(1, s, strlen(s));
+                write(1, "\n", 1);
+            }
+
+            if ((*p == ' ' || *p == '&' || *p == 0) && word)
+            {
+                word = 0;
+                *p = 0; // 终止当前参数字符串
+                if (cmd_count < PROC_ORIGIN_STACK)
+                {
+                    cmd_list[cmd_count].argv[cmd_list[cmd_count].argc++] = s;
+
+                    // 调试信息：记录参数到当前命令
+                    write(1, "Debug: add arg to cmd ", 22);
+                    char cmd_num[12]; // 足够存储大多数整数
+                    int len = int_to_str(cmd_count + 1, cmd_num);
+                    write(1, cmd_num, len);
+                    write(1, ": ", 2);
+                    write(1, s, strlen(s));
+                    write(1, "\n", 1);
+                }
+            }
+
+            if (*p == '&')
+            {
+                // 当前命令结束，准备下一个命令
+                cmd_list[cmd_count].argv[cmd_list[cmd_count].argc] = 0;
+                cmd_count++;
+
+                // 调试信息：检测到命令分隔符 '&'
+                write(1, "Debug: find '&'\n", 16);
+
+                if (cmd_count >= PROC_ORIGIN_STACK)
+                    break;
+                cmd_list[cmd_count].argc = 0;
+            }
+
+            p++;
+        }
+
+        // 处理最后一个命令（如果没有以‘&’结尾）
+        if (cmd_list[cmd_count].argc > 0)
+        {
+            cmd_list[cmd_count].argv[cmd_list[cmd_count].argc] = 0;
+            cmd_count++;
+
+            // 调试信息：处理最后一个命令
+            write(1, "Debug: last cmd\n", 16);
+        }
+
+        // 调试信息：显示解析后的命令数量
+        char count_str[50]; // 足够存储调试信息
+        strcpy(count_str, "Debug: find ");
+        int len = int_to_str(cmd_count, count_str + strlen(count_str));
+        strcpy(count_str + strlen("Debug: find ") + len, " cmds\n");
+        write(1, count_str, strlen(count_str));
+
+        // 遍历并执行所有解析出的命令
+	int i, j;
+        for (i = 0; i < cmd_count; i++)
+        {
+            struct command *cmd = &cmd_list[i];
+            if (cmd->argc == 0)
+                continue; // 跳过空命令
+
+            // 调试信息：显示当前执行的命令及其参数
+            write(1, "Debug: exec cmd ", 16);
+            write(1, cmd->argv[0], strlen(cmd->argv[0]));
+            for (j = 1; j < cmd->argc; j++)
+            {
+                write(1, " ", 1);
+                write(1, cmd->argv[j], strlen(cmd->argv[j]));
+            }
+            write(1, "\n", 1);
+
+            // 检查可执行文件是否存在
+            int fd = open(cmd->argv[0], O_RDWR);
+            if (fd == -1)
+            {
+                // 如果命令不存在，输出错误信息
+                write(1, "{", 1);
+                write(1, rdbuf, r);
+                write(1, "}\n", 2);
+
+                // 调试信息：命令未找到
+                write(1, "Debug: cmd not found\n", 21);
+                continue;
+            }
+            close(fd); // 关闭文件描述符
+
+            int pid = fork();
+            if (pid < 0)
+            {
+                // Fork失败，输出错误并继续
+                write(1, "Fork failed\n", 12);
+                continue;
+            }
+            if (pid == 0)
+            { 
+		write(1, "Debug: child start\n", 19);
+                // 子进程执行命令
+                /*if ((!STATIC_CHECK) || check_valid(cmd->argc, cmd->argv) == 1)
+                {
+                    write(1, cmd->argv[0], strlen(cmd->argv[0]));
+                    write(1, " is valid\n", 10);
+                }
+                else
+                {
+                    write(1, cmd->argv[0], strlen(cmd->argv[0]));
+                    write(1, " is not valid\n", 14);
+                }*/
+                execv(cmd->argv[0], cmd->argv);
+            }
+            else
+            { 
+                // 父进程等待子进程结束
+                int status;
+                wait(&status);
+
+                // 调试信息：子进程结束
+                write(1, "Debug: child exit\n", 18);
+            }
+        }
+    }
+
+    // 关闭文件描述符（实际上，这部分代码永远不会到达）
+    // 这里为了完整性，将关闭操作放在循环外
+    // 但实际上，由于循环是无限的，无法执行到这里
+    // 这部分代码可以根据需要调整
+    void close_fds() {
+        close(1);
+        close(0);
+    }
+}
 /*****************************************************************************
  *                                Init
  *****************************************************************************/
@@ -576,8 +652,10 @@ void Init()
  *======================================================================*/
 void TestA()
 {
-	for (;;)
-		;
+	for (;;) {
+		printl("A");
+		milli_delay(10000);
+	}		
 }
 
 /*======================================================================*

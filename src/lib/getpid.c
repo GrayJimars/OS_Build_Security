@@ -38,3 +38,15 @@ PUBLIC int getpid()
 
 	return msg.PID;
 }
+
+PUBLIC struct proc * getpaddr(int pid)
+{
+	MESSAGE msg;
+	msg.type	= GET_PROC_INFO;
+	msg.PID 	= pid;
+
+	send_recv(BOTH, TASK_MM, &msg);
+	assert(msg.type == SYSCALL_RET);
+
+	return msg.BUF;
+}

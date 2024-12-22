@@ -70,10 +70,12 @@ PUBLIC void schedule()
 
 PUBLIC void schedule() {
 	int is_find = 0;	// find proc to schedule or not
+	struct proc* p;
+	int queue_num;
 	while (!is_find) {
 		// Initialize high queue status at the beginning, ensure has proc in queue to schedule
 		// And when new proc comes, add it to high queue
-		for(struct proc* p = &FIRST_PROC; p <= &LAST_PROC; p++) {
+		for(p = &FIRST_PROC; p <= &LAST_PROC; p++) {
 			if (p->p_flags == 0 && p->inqueue == 0 && p->isschedule == 0) {
 				p->whichqueue = 0;
 				p->time = queue[0].time_piece;
@@ -83,7 +85,7 @@ PUBLIC void schedule() {
 		}
 
 		// traversal three queues in turn
-		for (int queue_num = 0; queue_num < 3; queue_num++) {
+		for (queue_num = 0; queue_num < 3; queue_num++) {
 			int pointer = queue[queue_num].front;
 			int count = queue[queue_num].len;
 			// handle all procs in this queue
@@ -119,7 +121,7 @@ PUBLIC void schedule() {
 		// are runnable in the process table
 		// then loop to find proc to schedule
 		if (!is_find) {
-			for (struct proc* p = &FIRST_PROC; p <= &LAST_PROC; p++) {
+			for (p = &FIRST_PROC; p <= &LAST_PROC; p++) {
 				if (p->p_flags == 0) {
 					p->isschedule = 0;
 				}

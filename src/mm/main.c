@@ -61,11 +61,11 @@ PUBLIC void task_mm()
 			do_wait();
 			reply = 0;
 			break;
-		case PSEARCH:
-			mm_msg.RETVAL = do_psearch();
+		case GET_PROC_INFO:
+			mm_msg.BUF = &proc_table[mm_msg.PID];
 			break;
 		case KILL:
-			mm_msg.RETVAL = do_kill();
+			do_kill(mm_msg.STATUS, mm_msg.PID); 
 			break;
 		default:
 			dump_msg("MM::unknown msg", &mm_msg);

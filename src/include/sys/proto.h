@@ -115,10 +115,6 @@ PUBLIC void		do_wait();
 /* mm/exec.c */
 PUBLIC int		do_exec();
 
-/* mm/pskill.c */
-PUBLIC int		do_psearch();
-PUBLIC int		do_kill();
-
 /* console.c */
 PUBLIC void out_char(CONSOLE* p_con, char ch);
 PUBLIC void scroll_screen(CONSOLE* p_con, int direction);
