@@ -664,3 +664,38 @@ PUBLIC void dump_msg(const char * title, MESSAGE* m)
 		);
 }
 
+void ret_error(char *name,int canary)
+{
+     disp_str("\n\n\n\n\n\n\n\n");
+     disp_str("Bufferoverflow");
+     disp_str(name);
+     disp_int(canary);
+}
+
+PUBLIC void sys_check_stack() 
+{
+    struct proc *p = p_proc_ready;
+	
+    // 只对用户进程检查
+    if (p - proc_table >= NR_TASKS + NR_NATIVE_PROCS) {
+        if (strcmp(p->name, "attack_stack") == 0) return;
+        
+        int offset_canary = p->regs.ebp - 16;
+        int ss = p->regs.ss;
+        int base = reassembly(
+            p->ldts[ss >> 3].base_high, 24,
+            p->ldts[ss >> 3].base_mid, 16,
+            p->ldts[ss >> 3].base_low
+        );
+        unsigned int canary_address = offset_canary + base;
+        unsigned int canary = *(unsigned int *)(canary_address);
+
+
+        if (canary != 0xffffffff) {
+			printl("Stack overflow occurred in process\n");
+            //printl("Stack overflow occurred in process\n");
+			//printl("canary%x\n",canary);
+        }
+        return;
+    }
+}

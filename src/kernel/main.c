@@ -464,11 +464,11 @@ void shabby_shell(const char *tty_name)
                 write(1, "\n", 1);
             }
 
-            if ((*p == ' ' || *p == '&' || *p == 0) && word)
+            if ((*p == ' ' || *p == '&') && word)
             {
                 word = 0;
                 *p = 0; // 终止当前参数字符串
-                if (cmd_count < PROC_ORIGIN_STACK)
+                if (cmd_count < 8)
                 {
                     cmd_list[cmd_count].argv[cmd_list[cmd_count].argc++] = s;
 
@@ -498,6 +498,24 @@ void shabby_shell(const char *tty_name)
             }
 
             p++;
+
+			if (*p == 0 && word)
+			{
+				word = 0;
+				if (cmd_count < 8)
+				{
+					cmd_list[cmd_count].argv[cmd_list[cmd_count].argc++] = s;
+
+					// 调试信息：记录参数到当前命令
+                    write(1, "Debug: add arg to cmd ", 22);
+                    char cmd_num[12]; // 足够存储大多数整数
+                    int len = int_to_str(cmd_count + 1, cmd_num);
+                    write(1, cmd_num, len);
+                    write(1, ": ", 2);
+                    write(1, s, strlen(s));
+                    write(1, "\n", 1);
+				}
+			}
         }
 
         // 处理最后一个命令（如果没有以‘&’结尾）
@@ -561,17 +579,24 @@ void shabby_shell(const char *tty_name)
             { 
 		write(1, "Debug: child start\n", 19);
                 // 子进程执行命令
-                /*if ((!STATIC_CHECK) || check_valid(cmd->argc, cmd->argv) == 1)
-                {
-                    write(1, cmd->argv[0], strlen(cmd->argv[0]));
-                    write(1, " is valid\n", 10);
-                }
-                else
-                {
-                    write(1, cmd->argv[0], strlen(cmd->argv[0]));
-                    write(1, " is not valid\n", 14);
-                }*/
-                execv(cmd->argv[0], cmd->argv);
+				if (STATIC_CHECK)
+				{
+					if (check_valid(cmd->argc, cmd->argv) == 1)
+					{
+						write(1, cmd->argv[0], strlen(cmd->argv[0]));
+						write(1, " is valid\n", 10);
+						execv(cmd->argv[0], cmd->argv);
+					}
+					else
+					{
+						write(1, cmd->argv[0], strlen(cmd->argv[0]));
+						write(1, " is not valid\n", 14);
+					}
+				}
+				else 
+				{
+                	execv(cmd->argv[0], cmd->argv);
+				}
             }
             else
             { 
@@ -589,10 +614,8 @@ void shabby_shell(const char *tty_name)
     // 这里为了完整性，将关闭操作放在循环外
     // 但实际上，由于循环是无限的，无法执行到这里
     // 这部分代码可以根据需要调整
-    void close_fds() {
-        close(1);
-        close(0);
-    }
+    close(1);
+    close(0);
 }
 /*****************************************************************************
  *                                Init

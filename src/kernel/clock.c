@@ -47,31 +47,11 @@ PUBLIC void clock_handler(int irq)
 	if (p_proc_ready->time) {
 		p_proc_ready->time--;
 	}
-
-	/* if (p_proc_ready->ticks > 0) {
-		return;
-	}*/
-
-	schedule();
-	// disp_int(p_proc_ready - &FIRST_PROC);
-	// disp_str(",");
-	
-	/* 
-	for (int queue_num = 0; queue_num < 3; queue_num++) {
-		disp_int(queue_num);
-		disp_str(": ");
-		int pointer = queue[queue_num].front;
-		while (pointer != queue[queue_num].rear) {
-			disp_int(queue[queue_num].proc_queue[pointer] - &FIRST_PROC);
-			disp_str(",");
-			pointer = (pointer + 1) % 50;
-		}
-		disp_str("                               \n");
+	if (DYNAMIC_CHECK)
+	{
+		check_stack();
 	}
-	disp_str("p_proc_ready: ");
-	disp_int(p_proc_ready - &FIRST_PROC);
-	disp_str("                                   \n");
-	*/
+	schedule();
 }
 
 /*****************************************************************************

@@ -78,8 +78,6 @@ PUBLIC void task_fs()
 			fs_msg.RETVAL = do_stat();
 			break;
 		case SEARCH:
-			// printl("buf address in fs main: %d\n", fs_msg.buf);
-			// printl("buf = %s\n", fs_msg.buf);
 			fs_msg.BUF = do_search();
 			break;
 		default:

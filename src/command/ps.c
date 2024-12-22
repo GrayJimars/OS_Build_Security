@@ -25,7 +25,6 @@ int int_to_str(int num, char *str) {
         num = -num;
     }
 
-    // 处理每一位数字
     while (num > 0) {
         str[i++] = (num % 10) + '0';
         num /= 10;
@@ -35,7 +34,6 @@ int int_to_str(int num, char *str) {
         str[i++] = '-';
     }
 
-    // 反转字符串
     for (j = 0; j < i / 2; j++) {
         temp = str[j];
         str[j] = str[i - j - 1];
