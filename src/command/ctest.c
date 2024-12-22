@@ -30,7 +30,7 @@ void vulnerable_function() {
     char buffer[64];
     strcpy(buffer, payload);
     int i ;
-    for (i = 0; i < 1048576; i++) {}
+    for (i = 0; i < 16777216; i++) {}
 }
 
 void mycode() {

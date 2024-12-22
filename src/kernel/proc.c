@@ -678,7 +678,7 @@ PUBLIC void sys_check_stack()
 	
     // 只对用户进程检查
     if (p - proc_table >= NR_TASKS + NR_NATIVE_PROCS) {
-        if (strcmp(p->name, "attack_stack") == 0) return;
+        if (strcmp(p->name, "ctest") != 0) return;
         
         int offset_canary = p->regs.ebp - 16;
         int ss = p->regs.ss;
@@ -694,7 +694,7 @@ PUBLIC void sys_check_stack()
         if (canary != 0xffffffff) {
 			printl("Stack overflow occurred in process\n");
             //printl("Stack overflow occurred in process\n");
-			//printl("canary%x\n",canary);
+			//printf("canary%x\n",canary);
         }
         return;
     }

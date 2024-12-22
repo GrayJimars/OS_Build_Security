@@ -56,7 +56,8 @@ int is_pid_inwhite(int pid)
 	struct Whitelist *p = (struct Whitelist*)&open_white_list;
 	if(is_inited)
 	printf("%d\n",p);
-	for(int i = 0;i<p->tail; i++)
+	int i;
+	for(i = 0;i<p->tail; i++)
 	{
 		if(p->list[i] == pid)
 		return 1;
@@ -68,7 +69,8 @@ int is_protected_file(const char *pathname)
 {
 	printl("%s\n",pathname);
 	struct protected_filelist *p = (struct protected_filelist *)&protected_file;
-    for (int i = 0; i < p->tail; i++) 
+	int i;
+    for (i = 0; i < p->tail; i++) 
 	{
         // 如果当前字符串不是空字符串，比较它与 pathname
         if (p->file_list[i][0] != '\0' && string_equals(p->file_list[i], pathname)) 
@@ -81,7 +83,8 @@ int is_protected_file(const char *pathname)
 
 PUBLIC int initialize_whitelist() {
     open_white_list.tail = 0;
-    for (int i = 0; i <= 30; i++) {
+	int i;
+    for (i = 0; i <= 30; i++) {
         if (i != 12) { // 排除12号进程
             open_white_list.list[open_white_list.tail++] = i;
         }

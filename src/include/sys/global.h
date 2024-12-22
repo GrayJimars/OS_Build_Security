@@ -85,5 +85,5 @@ extern struct protected_filelist protected_file;
 
 
 #define STATIC_CHECK 0
-#define DYNAMIC_CHECK 0
+#define DYNAMIC_CHECK 1
 
