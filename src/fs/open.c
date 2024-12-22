@@ -145,11 +145,22 @@ PUBLIC int do_open()
 
 	if (inode_nr == INVALID_INODE) { /* file not exists */
 		if (flags & O_CREAT) {
-			pin = create_file(pathname, flags);
-		}
-		else {
-			printl("{FS} file not exists: %s\n", pathname);
+			if (inode_nr) {
+			printl("{FS} file exists.\n");
 			return -1;
+			}
+		else {
+				pin = create_file(pathname, flags);
+				if(!(pathname == "/dev_tty0"))
+					{			
+					MESSAGE msg,msg_log;
+					msg_log.type = FILE_LOG;
+					msg_log.u.m2.m2p2=" Create file ";
+					msg_log.u.m2.m2p3=" fd : ";
+        			msg_log.u.m1.m1i1=fd;
+					send_recv(SEND, TASK_LOG, &msg_log); 
+				}
+			}
 		}
 	}
 	else if (flags & O_RDWR) { /* file exists */

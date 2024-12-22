@@ -68,6 +68,9 @@ PUBLIC void task_tty();
 PUBLIC void in_process(TTY* p_tty, u32 key);
 PUBLIC void dump_tty_buf();	/* for debug only */
 
+/* syslog.c */
+PUBLIC void task_log();
+
 /* systask.c */
 PUBLIC void task_sys();
 

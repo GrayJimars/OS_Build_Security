@@ -64,6 +64,9 @@ extern	const int		LOGBUF_SIZE;
 extern	char *			logdiskbuf;
 extern	const int		LOGDISKBUF_SIZE;
 
+EXTERN int system_ready;
+EXTERN int dev_ready;
+
 extern int is_inited;
 PUBLIC struct s_queue queue[3];
 

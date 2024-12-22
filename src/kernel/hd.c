@@ -30,11 +30,11 @@ PRIVATE void	hd_ioctl		(MESSAGE * p);
 PRIVATE void	hd_cmd_out		(struct hd_cmd* cmd);
 PRIVATE void	get_part_table		(int drive, int sect_nr, struct part_ent * entry);
 PRIVATE void	partition		(int device, int style);
-/* PRIVATE void	print_hdinfo		(struct hd_info * hdi); */
+PRIVATE void    print_hdinfo            (struct hd_info * hdi, char* buffer);
 PRIVATE int	waitfor			(int mask, int val, int timeout);
 PRIVATE void	interrupt_wait		();
 PRIVATE	void	hd_identify		(int drive);
-PRIVATE void	print_identify_info	(u16* hdinfo);
+PRIVATE void    print_identify_info     (u16* hdinfo, char *log_buffer);
 
 PRIVATE	u8		hd_status;
 PRIVATE	u8		hdbuf[SECTOR_SIZE * 2];
@@ -131,10 +131,17 @@ PRIVATE void hd_open(int device)
 	assert(drive == 0);	/* only one drive */
 
 	hd_identify(drive);
+	char log_message[1024];  // 假设日志消息的最大长度为1024个字符
 
 	if (hd_info[drive].open_cnt++ == 0) {
 		partition(drive * (NR_PART_PER_DRIVE + 1), P_PRIMARY);
-		/* print_hdinfo(&hd_info[drive]); */
+		print_hdinfo(&hd_info[drive], log_message);
+
+		MESSAGE msg;
+        msg.type = DEV_LOG;  // 假设消息类型为 1
+        msg.u.m2.m2p1 = log_message;  // 将信息存入消息字段
+
+		send_recv(SEND, TASK_LOG, &msg);
 	}
 }
 
@@ -346,30 +353,33 @@ PRIVATE void partition(int device, int style)
 /*  *  */
 /*  * @param hdi  Ptr to struct hd_info. */
 /*  *****************************************************************************\/ */
-/* PRIVATE void print_hdinfo(struct hd_info * hdi) */
-/* { */
-/* 	int i; */
-/* 	for (i = 0; i < NR_PART_PER_DRIVE + 1; i++) { */
-/* 		printl("{HD} %sPART_%d: base %d(0x%x), size %d(0x%x) (in sector)\n", */
-/* 		       i == 0 ? " " : "     ", */
-/* 		       i, */
-/* 		       hdi->primary[i].base, */
-/* 		       hdi->primary[i].base, */
-/* 		       hdi->primary[i].size, */
-/* 		       hdi->primary[i].size); */
-/* 	} */
-/* 	for (i = 0; i < NR_SUB_PER_DRIVE; i++) { */
-/* 		if (hdi->logical[i].size == 0) */
-/* 			continue; */
-/* 		printl("{HD}          " */
-/* 		       "%d: base %d(0x%x), size %d(0x%x) (in sector)\n", */
-/* 		       i, */
-/* 		       hdi->logical[i].base, */
-/* 		       hdi->logical[i].base, */
-/* 		       hdi->logical[i].size, */
-/* 		       hdi->logical[i].size); */
-/* 	} */
-/* } */
+PRIVATE void print_hdinfo(struct hd_info * hdi, char* buffer)
+{
+	int i;
+  	int offset = 0;  // 用于追踪缓冲区的位置
+	for (i = 0; i < NR_PART_PER_DRIVE + 1; i++) {
+		 offset += sprintf(buffer + offset, 
+                          "%sPART_%d: base %d(0x%x), size %d(0x%x) (in sector)\n",
+                          i == 0 ? " " : "     ",
+                          i,
+                          hdi->primary[i].base,
+                          hdi->primary[i].base,
+                          hdi->primary[i].size,
+                          hdi->primary[i].size);
+	}
+	for (i = 0; i < NR_SUB_PER_DRIVE; i++) {
+		if (hdi->logical[i].size == 0)
+			continue;
+		 offset += sprintf(buffer + offset, 
+                          "         "
+                          "%d: base %d(0x%x), size %d(0x%x) (in sector)\n",
+                          i,
+                          hdi->logical[i].base,
+                          hdi->logical[i].base,
+                          hdi->logical[i].size,
+                          hdi->logical[i].size);
+	}
+}
 
 /*****************************************************************************
  *                                hd_identify
@@ -388,7 +398,15 @@ PRIVATE void hd_identify(int drive)
 	interrupt_wait();
 	port_read(REG_DATA, hdbuf, SECTOR_SIZE);
 
-	print_identify_info((u16*)hdbuf);
+	// 使用日志缓冲区存储硬盘信息
+    char log_message[1024];  // 用于存储硬盘识别信息
+	print_identify_info((u16*)hdbuf, log_message);
+    // 构造消息并传递给 rsyslog
+    MESSAGE msg;
+    msg.type = DEV_LOG;  // 日志类型
+    msg.u.m2.m2p1 = log_message;  // 将日志信息传递给消息
+    send_recv(SEND, TASK_LOG, &msg);  // 发送日志信息给 rsyslog
+
 
 	u16* hdinfo = (u16*)hdbuf;
 
@@ -405,38 +423,39 @@ PRIVATE void hd_identify(int drive)
  * 
  * @param hdinfo  The buffer read from the disk i/o port.
  *****************************************************************************/
-PRIVATE void print_identify_info(u16* hdinfo)
+PRIVATE void print_identify_info(u16* hdinfo, char *log_message)
 {
-	int i, k;
-	char s[64];
+    int i, k;
+    int offset = 0;  // 用于追踪缓冲区的位置
 
-	struct iden_info_ascii {
-		int idx;
-		int len;
-		char * desc;
-	} iinfo[] = {{10, 20, "HD SN"}, /* Serial number in ASCII */
-		     {27, 40, "HD Model"} /* Model number in ASCII */ };
+    struct iden_info_ascii {
+        int idx;
+        int len;
+        char * desc;
+    } iinfo[] = {{10, 20, "HD SN"}, /* Serial number in ASCII */
+                 {27, 40, "HD Model"} /* Model number in ASCII */ };
 
-	for (k = 0; k < sizeof(iinfo)/sizeof(iinfo[0]); k++) {
-		char * p = (char*)&hdinfo[iinfo[k].idx];
-		for (i = 0; i < iinfo[k].len/2; i++) {
-			s[i*2+1] = *p++;
-			s[i*2] = *p++;
-		}
-		s[i*2] = 0;
-		printl("{HD} %s: %s\n", iinfo[k].desc, s);
-	}
+    // 格式化硬盘识别信息并写入 log_buffer
+    for (k = 0; k < sizeof(iinfo)/sizeof(iinfo[0]); k++) {
+        char * p = (char*)&hdinfo[iinfo[k].idx];
+        char s[64];
+        for (i = 0; i < iinfo[k].len/2; i++) {
+            s[i*2+1] = *p++;
+            s[i*2] = *p++;
+        }
+        s[i*2] = 0;
 
-	int capabilities = hdinfo[49];
-	printl("{HD} LBA supported: %s\n",
-	       (capabilities & 0x0200) ? "Yes" : "No");
+        offset += sprintf(log_message + offset, "%s: %s\n", iinfo[k].desc, s);
+    }
 
-	int cmd_set_supported = hdinfo[83];
-	printl("{HD} LBA48 supported: %s\n",
-	       (cmd_set_supported & 0x0400) ? "Yes" : "No");
+    int capabilities = hdinfo[49];
+    offset += sprintf(log_message + offset, "LBA supported: %s\n", (capabilities & 0x0200) ? "Yes" : "No");
 
-	int sectors = ((int)hdinfo[61] << 16) + hdinfo[60];
-	printl("{HD} HD size: %dMB\n", sectors * 512 / 1000000);
+    int cmd_set_supported = hdinfo[83];
+    offset += sprintf(log_message + offset, "LBA48 supported: %s\n", (cmd_set_supported & 0x0400) ? "Yes" : "No");
+
+    int sectors = ((int)hdinfo[61] << 16) + hdinfo[60];
+    offset += sprintf(log_message + offset, "HD size: %dMB\n", sectors * 512 / 1000000);
 }
 
 /*****************************************************************************

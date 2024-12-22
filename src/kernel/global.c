@@ -19,6 +19,7 @@
 #include "proc.h"
 #include "global.h"
 #include "proto.h"
+#include "log.h"
 
 PUBLIC struct Whitelist open_white_list = {{0},0};
 PUBLIC struct protected_filelist protected_file = {{{0}},0};
@@ -33,7 +34,9 @@ PUBLIC	struct task	task_table[NR_TASKS] = {
 	{task_sys,      STACK_SIZE_SYS,   "SYS"       },
 	{task_hd,       STACK_SIZE_HD,    "HD"        },
 	{task_fs,       STACK_SIZE_FS,    "FS"        },
-	{task_mm,       STACK_SIZE_MM,    "MM"        }};
+	{task_mm,       STACK_SIZE_MM,    "MM"        },
+	{task_log,      STACK_SIZE_LOG,   "LOG"       }
+	};
 
 PUBLIC	struct task	user_proc_table[NR_NATIVE_PROCS] = {
 	/* entry    stack size     proc name */
@@ -97,6 +100,9 @@ PUBLIC	char *		logbuf		= (char*)0x800000;
 PUBLIC	const int	LOGBUF_SIZE	= 0x100000;
 PUBLIC	char *		logdiskbuf	= (char*)0x900000;
 PUBLIC	const int	LOGDISKBUF_SIZE	= 0x100000;
+
+PUBLIC struct syscall_log syscall_logs[MAX_SYSCALL_LOGS];
+PUBLIC int syscall_log_index = 0;
 
 PUBLIC	struct s_queue queue[3] = {
 /* proc_queue front rear time_piece len */

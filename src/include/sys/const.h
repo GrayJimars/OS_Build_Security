@@ -137,7 +137,8 @@
 #define TASK_HD		2
 #define TASK_FS		3
 #define TASK_MM		4
-#define INIT		5
+#define TASK_LOG	5
+#define INIT		6
 #define ANY		(NR_TASKS + NR_PROCS + 10)
 #define NO_TASK		(NR_TASKS + NR_PROCS + 20)
 
@@ -189,7 +190,15 @@ enum msgtype {
 	DEV_CLOSE,
 	DEV_READ,
 	DEV_WRITE,
-	DEV_IOCTL
+	DEV_IOCTL,
+
+	/*log*/
+	PROC_LOG,	
+	DEV_LOG,
+	FILE_LOG,
+	FILE_LOG_DO,
+	FILE_LOG_DELETE,
+	SYS_LOG
 };
 
 /* macros for messages */

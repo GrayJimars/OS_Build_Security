@@ -632,7 +632,7 @@ void Init()
 	assert(fd_stdout == 1);
 
 	printf("Init() is running ...\n");
-
+	log_proc_init();
 	initialize_whitelist();
 	initialize_protected_filelist();
 	/* extract `cmd.tar' */
@@ -678,8 +678,7 @@ void Init()
 void TestA()
 {
 	for (;;) {
-		printl("A");
-		milli_delay(10000);
+		;
 	}		
 }
 
@@ -701,6 +700,41 @@ void TestC()
 		;
 }
 
+/*****************************************************************************
+ *                               log_proc
+ *****************************************************************************/
+void log_proc_init()
+{	
+	MESSAGE msg_log;
+	struct proc * p = proc_table;
+
+	for (int i = 0; i < NR_TASKS + NR_NATIVE_PROCS; i++) 
+	{
+ 		if (i < NR_TASKS) 
+		{
+			msg_log.type=PROC_LOG;
+
+			msg_log.u.m2.m2p2=p->name;
+			
+			msg_log.u.m2.m2p3 = " PRIVILEGE:task  PID: ";
+
+			msg_log.u.m1.m1i1 = i;
+			send_recv(SEND, TASK_LOG, &msg_log);
+		}
+		else
+		{
+			msg_log.type=PROC_LOG;
+
+			msg_log.u.m2.m2p2=p->name;
+			
+			msg_log.u.m2.m2p3 = " PRIVILEGE:user  PID: ";
+
+			msg_log.u.m1.m1i1 = i;
+			send_recv(SEND, TASK_LOG, &msg_log);
+		}
+		p++;
+	}
+}
 /*****************************************************************************
  *                                panic
  *****************************************************************************/

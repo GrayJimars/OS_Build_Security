@@ -350,6 +350,13 @@ PRIVATE u8 get_byte_from_kb_buf()
 	kb_in.count--;
 	enable_int();		/* for synchronization */
 
+	char *log_message;
+	log_message="Keyboard Press Detected!";
+ 	MESSAGE msg_log;
+    msg_log.type = DEV_LOG;  // 日志类型
+	msg_log.u.m2.m2p1 = log_message;  // 将日志信息传递给消息
+	send_recv(SEND, TASK_LOG, &msg_log);
+
 	return scan_code;
 }
 

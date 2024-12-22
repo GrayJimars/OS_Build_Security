@@ -31,12 +31,17 @@
  *****************************************************************************/
 PUBLIC int wait(int * status)
 {
-	MESSAGE msg;
+	MESSAGE msg,msg_log;
 	msg.type   = WAIT;
 
 	send_recv(BOTH, TASK_MM, &msg);
 
 	*status = msg.STATUS;
+	msg_log.type=PROC_LOG;
+    msg_log.u.m2.m2p2=" Exit Process ";
+	msg_log.u.m2.m2p3=" PID : ";
+    msg_log.u.m1.m1i1=msg.PID;
+	send_recv(SEND, TASK_LOG, &msg_log);  // 发送日志信息给 rsyslog
 
 	return (msg.PID == NO_TASK ? -1 : msg.PID);
 }

@@ -1,0 +1,110 @@
+    5388
+                      
+<2024-12-23 02:12:44>
+         
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 0
+LOG TYPE: Device initial log and Device Access DETAILS: Keyboard Press Detected!
+LOG TYPE: Device initial log and Device Access DETAILS: Keyboard Press Detected!
+LOG TYPE: Device initial log and Device Access DETAILS: HD SN: BXHD00011           
+HD Model: Generic 1234                            
+LBA supported: Yes
+LBA48 supported: Yes
+HD size: 83MB
+
+LOG TYPE: Device initial log and Device Access DETAILS:  PART_0: base 0(0x0), size 163296(0x27DE0) (in sector)
+     PART_1: base 63(0x3F), size 20097(0x4E81) (in sector)
+     PART_2: base 20160(0x4EC0), size 143136(0x22F20) (in sector)
+     PART_3: base 0(0x0), size 0(0x0) (in sector)
+     PART_4: base 0(0x0), size 0(0x0) (in sector)
+         16: base 20223(0x4EFF), size 40257(0x9D41) (in sector)
+         17: base 60543(0xEC7F), size 30177(0x75E1) (in sector)
+         18: base 90783(0x1629F), size 42273(0xA521) (in sector)
+         19: base 133119(0
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 1
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 Init() is running ...
+
+LOG TYPE: Process Monitor DETAILS:TTY  PRIVILEGE:task  PID: 0
+LOG TYPE: Process Monitor DETAILS:SYS  PRIVILEGE:task  PID: 1
+LOG TYPE: Process Monitor DETAILS:HD  PRIVILEGE:task  PID: 2
+LOG TYPE: Process Monitor DETAILS:FS  PRIVILEGE:task  PID: 3
+LOG TYPE: Process Monitor DETAILS:MM  PRIVILEGE:task  PID: 4
+LOG TYPE: Process Monitor DETAILS:LOG  PRIVILEGE:task  PID: 5
+LOG TYPE: Process Monitor DETAILS:INIT  PRIVILEGE:user  PID: 6
+LOG TYPE: Process Monitor DETAILS:TestA  PRIVILEGE:user  PID: 7
+LOG TYPE: Process Monitor DETAILS:TestB  PRIVILEGE:user  PID: 8
+LOG TYPE: Process Monitor DETAILS:TestC  PRIVILEGE:user  PID: 9
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 [extract `/cmd.tar'
+
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 2
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Read file   fd: 2 
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1     need not unpack the file.
+
+LOG TYPE: FILE ACCESS DETAILS:  Close file   fd : 2
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1  done, 0 files extracted]
+
+LOG TYPE: System Call DETAILS: 4  syscall return 
+LOG TYPE: Process Monitor DETAILS: Create child   PID : 10
+LOG TYPE: System Call DETAILS: 10  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 2
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 [parent is running, child pid:10]
+
+LOG TYPE: System Call DETAILS: 10  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 [parent is running, child pid:10]
+
+LOG TYPE: FILE ACCESS DETAILS:  Close file   fd : 0
+LOG TYPE: System Call DETAILS: 10  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Close file   fd : 1
+LOG TYPE: System Call DETAILS: 10  syscall return 
+LOG TYPE: System Call DETAILS: 10  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 0
+LOG TYPE: Process Monitor DETAILS: Create child   PID : 11
+LOG TYPE: System Call DETAILS: 4  syscall return 
+LOG TYPE: System Call DETAILS: 10  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 1
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 [parent is running, child pid:11]
+
+LOG TYPE: System Call DETAILS: 11  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 2
+LOG TYPE: System Call DETAILS: 10  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 $ 
+LOG TYPE: System Call DETAILS: 11  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 [parent is running, child pid:11]
+
+LOG TYPE: FILE ACCESS DETAILS:  Close file   fd : 0
+LOG TYPE: System Call DETAILS: 11  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Close file   fd : 1
+LOG TYPE: System Call DETAILS: 11  syscall return 
+LOG TYPE: System Call DETAILS: 11  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 0
+LOG TYPE: Process Monitor DETAILS: Create child   PID : 12
+LOG TYPE: System Call DETAILS: 4  syscall return 
+LOG TYPE: System Call DETAILS: 12  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 2
+LOG TYPE: System Call DETAILS: 11  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: 1
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 [parent is running, child pid:12]
+
+LOG TYPE: System Call DETAILS: 6  syscall return 
+LOG TYPE: System Call DETAILS: 12  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 [parent is running, child pid:12]
+
+LOG TYPE: System Call DETAILS: 11  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Wirte file   fd: 1 $ 
+LOG TYPE: FILE ACCESS DETAILS:  Close file   fd : 0
+LOG TYPE: System Call DETAILS: 12  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Close file   fd : 1
+LOG TYPE: System Call DETAILS: 12  syscall return 
+LOG TYPE: System Call DETAILS: 12  syscall return 
+LOG TYPE: FILE ACCESS DETAILS:  Open file   fd: -1
+

@@ -36,13 +36,19 @@ int list_inited = 0;
 PUBLIC int open(const char *pathname, int flags)
 {
 
-	MESSAGE msg;
+	MESSAGE msg,msg_log;
 	msg.type	= OPEN;
 	msg.PATHNAME	= (void*)pathname;
 	msg.FLAGS	= flags;
 	msg.NAME_LEN	= strlen(pathname);
 	send_recv(BOTH, TASK_FS, &msg);
+
 	assert(msg.type == SYSCALL_RET);
+	msg_log.type = FILE_LOG;
+	msg_log.u.m2.m2p2=" Open file ";
+	msg_log.u.m2.m2p3=" fd: ";
+    msg_log.u.m1.m1i1=msg.FD;
+	send_recv(SEND, TASK_LOG, &msg_log); 
 
 	return msg.FD;
 }

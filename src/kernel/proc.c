@@ -16,7 +16,10 @@
 #include "proc.h"
 #include "global.h"
 #include "proto.h"
+#include "log.h"
 
+static char buf[64];
+PRIVATE const char* get_syscall_name(int type);
 PRIVATE void block(struct proc* p);
 PRIVATE void unblock(struct proc* p);
 PRIVATE int  msg_send(struct proc* current, int dest, MESSAGE* m);
@@ -157,6 +160,18 @@ PUBLIC int sys_sendrec(int function, int src_dest, MESSAGE* m, struct proc* p)
 
 	assert(mla->source != src_dest);
 
+	// 在系统调用执行前记录日志
+	if (src_dest != TASK_LOG) {
+		// 写入缓冲区
+		struct syscall_log* log = &syscall_logs[syscall_log_index];
+		strcpy(log->proc_name, p->name);
+		log->pid = caller;
+		strcpy(log->syscall_name, get_syscall_name(m->type));
+		log->ret = 0;
+		log->valid = 1;
+		
+		syscall_log_index = (syscall_log_index + 1) % MAX_SYSCALL_LOGS;
+	}
 	/**
 	 * Actually we have the third message type: BOTH. However, it is not
 	 * allowed to be passed to the kernel directly. Kernel doesn't know
@@ -698,4 +713,51 @@ PUBLIC void sys_check_stack()
         }
         return;
     }
+}
+
+PRIVATE const char* get_syscall_name(int type)
+{
+	switch(type) {
+		case 0:            return "MSG_INIT";
+		
+		// 硬件中断
+		case HARD_INT:      return "HARD_INT";
+		
+		// SYS任务相关
+		case GET_TICKS:     return "GET_TICKS";
+		case GET_PID:       return "GET_PID";
+		case GET_RTC_TIME:  return "GET_RTC_TIME";
+		
+		// 文件系统相关
+		case OPEN:          return "OPEN";
+		case CLOSE:         return "CLOSE";
+		case READ:          return "READ";
+		case WRITE:         return "WRITE";
+		case LSEEK:         return "LSEEK";
+		case STAT:          return "STAT";
+		case UNLINK:        return "UNLINK";
+		
+		// 进程控制相关
+		case SUSPEND_PROC:  return "SUSPEND_PROC";
+		case RESUME_PROC:   return "RESUME_PROC";
+		case EXEC:          return "EXEC";
+		case WAIT:          return "WAIT";
+		case FORK:          return "FORK";
+		case EXIT:          return "EXIT";
+		
+		// 系统调用返回
+		case SYSCALL_RET:   return "SYSCALL_RET";
+		
+		// 设备驱动相关
+		case DEV_OPEN:      return "DEV_OPEN";
+		case DEV_CLOSE:     return "DEV_CLOSE";
+		case DEV_READ:      return "DEV_READ";
+		case DEV_WRITE:     return "DEV_WRITE";
+		case DEV_IOCTL:     return "DEV_IOCTL";
+		
+		default:            
+			memset(buf, 0, sizeof(buf));
+			sprintf(buf, "UNKNOWN(%d)", type);
+			return buf;
+	}
 }

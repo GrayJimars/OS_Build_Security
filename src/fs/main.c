@@ -125,7 +125,14 @@ PUBLIC void task_fs()
 		if (fs_msg.type != SUSPEND_PROC) {
 			fs_msg.type = SYSCALL_RET;
 			send_recv(SEND, src, &fs_msg);
+
+			MESSAGE sys_log;
+			sys_log.type=SYS_LOG;
+			sys_log.u.m2.m2p2=" syscall return ";
+			sys_log.u.m1.m1i1=src;
+			send_recv(SEND, TASK_LOG, &sys_log);
 		}
+
 	}
 }
 

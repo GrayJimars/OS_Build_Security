@@ -30,9 +30,14 @@
  *****************************************************************************/
 PUBLIC void exit(int status)
 {
-	MESSAGE msg;
+	MESSAGE msg,msg_log;
 	msg.type	= EXIT;
 	msg.STATUS	= status;
+	msg_log.type=PROC_LOG;
+    msg_log.u.m2.m2p2=" Exit Process ";
+	msg_log.u.m2.m2p3=" Status : ";
+    msg_log.u.m1.m1i1=msg.STATUS;
+	send_recv(SEND, TASK_LOG, &msg_log);  // 发送日志信息给 rsyslog
 
 	send_recv(BOTH, TASK_MM, &msg);
 	assert(msg.type == SYSCALL_RET);
