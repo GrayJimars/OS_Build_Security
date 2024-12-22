@@ -34,7 +34,7 @@ clean :
 	rm -f *.o
 
 realclean :
-	rm -f $(BIN) *.o
+	rm -f rm touch ls str echo pwd atk poc kill cover ctest ps cat *.o
 
 kernel.bin :
 	cp ../kernel.bin ./
