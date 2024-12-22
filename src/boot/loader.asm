@@ -417,7 +417,7 @@ LABEL_PM_START:
 ;;; 	call	DispHDInfo	; int 13h 读出的硬盘 geometry 好像有点不对头，不知道为什么，干脆不管它了
 	call	SetupPaging
 	xchg bx, bx
-	;call	TestAllocAndFree
+	call	TestAllocAndFree
 	;mov	ah, 0Fh				; 0000: 黑底    1111: 白字
 	;mov	al, 'P'
 	;mov	[gs:((80 * 0 + 39) * 2)], ax	; 屏幕第 0 行, 第 39 列。
@@ -916,30 +916,30 @@ alloc_pages:
 	mov eax, ebx
 	mov ebx, cr3
 	and ebx, 0xfffff000
-	and eax, 0xffc00000
+	and eax, 0xffc00000			; 
 	shr eax, 20					; shr 22 then shl 2
 	add ebx, eax				; ebx -> PDE
 	mov edx, ebx
-	mov ebx, [ebx]				; ebx -> first PTE
+	mov ebx, [ebx]				; ebx = PDE
 
 	test ebx, 0x0000_0001
 	jnz .pde_exist
 
-	; page table is not exist
+	; PDE is not exist
 	mov ebx, cr3
-	mov ebx, [ebx]
-	and ebx, 0xfffff000			; first address of physic
+	mov ebx, [ebx]				; ebx = first PDE
+	and ebx, 0xfffff000			; ebx -> first PTE(table)
 	shl eax, 10					; eax: the size of used pages
-	add ebx, eax
-	or ebx, 0x0000_0007
+	add ebx, eax				; ebx -> correct PTE
+	or ebx, 0x0000_0007			; ebx = correct PDE
 	mov [edx], ebx
 
 .pde_exist:
 	mov eax, [esp]				; original linear address
-	and ebx, 0xfffff000
+	and ebx, 0xfffff000			; ebx -> PDE first PTE
 	and eax, 0x003ff000			; middle 10 bits
 	shr eax, 10					; shr 12 then shl 2
-	add ebx, eax				; ebx -> PTE
+	add ebx, eax				; ebx -> correct PTE
 
 .change_pte:
 	call alloc_a_4k_page

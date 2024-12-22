@@ -20,7 +20,7 @@ void input() {
     char payload[] = {
         0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
         0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
-        0x41, 0x41, 0x41, 0x41, 0xb5, 0x10, 0x00};  // printf("%s\n", buf);
+        0x41, 0x41, 0x41, 0x41, 0xc0, 0x10, 0x00};  // printf("%s\n", buf);
     strcpy(buf, payload);
     printf("%s", buf);
     __asm__ __volatile__("xchg %bx, %bx");
@@ -28,6 +28,7 @@ void input() {
 }
 
 void shellcode() {
+    __asm__ __volatile__("xchg %bx, %bx");
     printf("=>\n");
     int i = 10000;
     while (i--)
@@ -37,7 +38,7 @@ void shellcode() {
 
 int main(int argc, char* argv[]) {
     __asm__ __volatile__("xchg %bx, %bx");
-    // shellcode();
+    //shellcode();
     input();
     return 0;
 }
