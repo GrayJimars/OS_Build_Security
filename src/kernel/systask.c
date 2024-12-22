@@ -34,6 +34,7 @@ PUBLIC void task_sys()
 {
 	MESSAGE msg;
 	struct time t;
+	struct proc *p;
 
 	while (1) {
 		send_recv(RECEIVE, ANY, &msg);

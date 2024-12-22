@@ -41,11 +41,12 @@ PUBLIC void* do_search() {
     int m = 0;
     struct dir_entry* pde;
     int pointer = 0;
+    int i, j;
     // processing every dir_entry of every sector
-    for (int i = 0; i < nr_dir_blks; i++) {
+    for (i = 0; i < nr_dir_blks; i++) {
         RD_SECT(dir_inode->i_dev, dir_blk0_nr + i);
         pde = (struct dir_entry* )fsbuf;
-        for (int j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++, pde++) {
+        for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++, pde++) {
             // save the file name into dir(msg.buf actually)
             memcpy(fs_msg.buf + pointer, pde->name, strlen(pde->name));
             // printl("%s\n", fs_msg.buf);

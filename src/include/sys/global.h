@@ -66,8 +66,6 @@ extern	const int		LOGDISKBUF_SIZE;
 
 extern int is_inited;
 PUBLIC struct s_queue queue[3];
-#define STATIC_CHECK 1
-#define DYNAMIC_CHECK 1
 
 #define Whitelist_max 50
 #define FILE_MAX_COUNT 20    // 字符串数量
@@ -84,3 +82,8 @@ struct protected_filelist {
 
 extern struct Whitelist open_white_list;
 extern struct protected_filelist protected_file;
+
+
+#define STATIC_CHECK 0
+#define DYNAMIC_CHECK 0
+

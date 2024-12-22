@@ -8,7 +8,8 @@ int main(int argc, char* argv[]) {
         printf("rm [error]: you should use rm as following format:\n");
         printf("\trm [filename] [filename] ...\n");
     } else {
-        for (int i = 1; i < argc; i++) {
+	int i;
+        for (i = 1; i < argc; i++) {
             if (unlink(argv[i]) == -1) {
                 printf("Failed to remove file %s!\n", argv[i]);
                 return -1;

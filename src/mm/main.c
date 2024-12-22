@@ -61,6 +61,12 @@ PUBLIC void task_mm()
 			do_wait();
 			reply = 0;
 			break;
+		case GET_PROC_INFO:
+			mm_msg.BUF = &proc_table[mm_msg.PID];
+			break;
+		case KILL:
+			do_kill(mm_msg.STATUS, mm_msg.PID); 
+			break;
 		default:
 			dump_msg("MM::unknown msg", &mm_msg);
 			assert(0);

@@ -129,6 +129,7 @@ PUBLIC	int	unlink		(const char *pathname);
 
 /* lib/getpid.c */
 PUBLIC int	getpid		();
+PUBLIC struct proc * getpaddr	();
 
 /* lib/fork.c */
 PUBLIC int	fork		();
