@@ -11,6 +11,7 @@
 #define	EXTERN
 #endif
 
+
 EXTERN	int	ticks;
 
 EXTERN	int	disp_pos;
@@ -63,7 +64,23 @@ extern	const int		LOGBUF_SIZE;
 extern	char *			logdiskbuf;
 extern	const int		LOGDISKBUF_SIZE;
 
+extern int is_inited;
 PUBLIC struct s_queue queue[3];
-
 #define STATIC_CHECK 1
 #define DYNAMIC_CHECK 1
+
+#define Whitelist_max 50
+#define FILE_MAX_COUNT 20    // 字符串数量
+#define FILE_MAX_LENGTH 20 // 每个字符串的最大长度
+struct Whitelist {
+    int list[Whitelist_max];
+    int tail; 
+};
+
+struct protected_filelist {
+    char file_list[FILE_MAX_COUNT][FILE_MAX_LENGTH];
+    int tail; 
+};
+
+extern struct Whitelist open_white_list;
+extern struct protected_filelist protected_file;

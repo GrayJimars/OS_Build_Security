@@ -416,6 +416,7 @@ LABEL_PM_START:
 ;;; 	call	DispReturn
 ;;; 	call	DispHDInfo	; int 13h 读出的硬盘 geometry 好像有点不对头，不知道为什么，干脆不管它了
 	call	SetupPaging
+	xchg bx, bx
 	;call	TestAllocAndFree
 	;mov	ah, 0Fh				; 0000: 黑底    1111: 白字
 	;mov	al, 'P'

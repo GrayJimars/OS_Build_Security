@@ -534,6 +534,8 @@ void Init()
 
 	printf("Init() is running ...\n");
 
+	initialize_whitelist();
+	initialize_protected_filelist();
 	/* extract `cmd.tar' */
 	untar("/cmd.tar");
 
@@ -550,7 +552,8 @@ void Init()
 		}
 		else
 		{ /* child process */
-			printf("[child is running, pid:%d]\n", getpid());
+			int fd_child = open("/dev_tty0", O_RDWR);
+			printf("[child is running, pid:%d]fd_child is %d\n", getpid(),fd_child);
 			close(fd_stdin);
 			close(fd_stdout);
 
@@ -565,7 +568,6 @@ void Init()
 		int child = wait(&s);
 		printf("child (%d) exited with status: %d.\n", child, s);
 	}
-
 	assert(0);
 }
 

@@ -20,6 +20,8 @@
 #include "global.h"
 #include "proto.h"
 
+PUBLIC struct Whitelist open_white_list = {{0},0};
+PUBLIC struct protected_filelist protected_file = {{{0}},0};
 
 PUBLIC	struct proc proc_table[NR_TASKS + NR_PROCS];
 

@@ -38,6 +38,69 @@ PRIVATE void new_dir_entry(struct inode * dir_inode, int inode_nr, char * filena
  * 
  * @return File descriptor if successful, otherwise a negative error code.
  *****************************************************************************/
+ int string_equals(const char *str1, const char *str2) {
+	printl("%s\n",str1);
+	printl("%s\n",str2);
+    while (*str1 != '\0' && *str2 != '\0') {
+        if (*str1 != *str2) {
+            return 0; // 不相等
+        }
+        str1++;
+        str2++;
+    }
+    return (*str1 == '\0' && *str2 == '\0');
+}
+
+int is_pid_inwhite(int pid)
+{
+	struct Whitelist *p = (struct Whitelist*)&open_white_list;
+	if(is_inited)
+	printf("%d\n",p);
+	for(int i = 0;i<p->tail; i++)
+	{
+		if(p->list[i] == pid)
+		return 1;
+	}
+	return 0;
+}
+
+int is_protected_file(const char *pathname) 
+{
+	printl("%s\n",pathname);
+	struct protected_filelist *p = (struct protected_filelist *)&protected_file;
+    for (int i = 0; i < p->tail; i++) 
+	{
+        // 如果当前字符串不是空字符串，比较它与 pathname
+        if (p->file_list[i][0] != '\0' && string_equals(p->file_list[i], pathname)) 
+		{
+            return 1; 
+        }
+    }
+    return 0;
+}
+
+PUBLIC int initialize_whitelist() {
+    open_white_list.tail = 0;
+    for (int i = 0; i <= 30; i++) {
+        if (i != 12) { // 排除12号进程
+            open_white_list.list[open_white_list.tail++] = i;
+        }
+    }
+	return 1;
+}
+
+PUBLIC int initialize_protected_filelist() {
+    protected_file.tail = 0;
+    // 手动添加字符串 "echo" 到保护文件列表中
+    protected_file.file_list[protected_file.tail][0] = 'e';
+    protected_file.file_list[protected_file.tail][1] = 'c';
+    protected_file.file_list[protected_file.tail][2] = 'h';
+    protected_file.file_list[protected_file.tail][3] = 'o';
+    protected_file.file_list[protected_file.tail][4] = '\0';
+    protected_file.tail++;
+	return 1;
+}
+
 PUBLIC int do_open()
 {
 	int fd = -1;		/* return value */
@@ -48,6 +111,7 @@ PUBLIC int do_open()
 	int flags = fs_msg.FLAGS;	/* access mode */
 	int name_len = fs_msg.NAME_LEN;	/* length of filename */
 	int src = fs_msg.source;	/* caller proc nr. */
+
 	assert(name_len < MAX_PATH);
 	phys_copy((void*)va2la(TASK_FS, pathname),
 		  (void*)va2la(src, fs_msg.PATHNAME),
@@ -86,6 +150,15 @@ PUBLIC int do_open()
 		}
 	}
 	else if (flags & O_RDWR) { /* file exists */
+		if(!is_pid_inwhite(src))
+		{
+			printl("%d\n",src);
+			if(is_protected_file(pathname))
+			{
+				printl("%d\n",src);
+				return -1;
+			}
+		}
 		if ((flags & O_CREAT) && (!(flags & O_TRUNC))) {
 			assert(flags == (O_RDWR | O_CREAT));
 			printl("{FS} file exists: %s\n", pathname);

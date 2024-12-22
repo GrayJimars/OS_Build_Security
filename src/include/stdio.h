@@ -153,4 +153,5 @@ PUBLIC	int	syslog		(const char *fmt, ...);
 /* lib/search.c */
 PUBLIC 	char*	search	(char* path);
 
+
 #endif /* _ORANGES_STDIO_H_ */
