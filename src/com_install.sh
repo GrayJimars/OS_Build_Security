@@ -1,5 +1,5 @@
 gzip -dk 80m.img.gz
 cd command
-sudo make all
-sudo make install
+make all
+make install
 cd ..
