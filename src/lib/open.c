@@ -41,6 +41,13 @@ PUBLIC int open(const char *pathname, int flags)
 	msg.PATHNAME	= (void*)pathname;
 	msg.FLAGS	= flags;
 	msg.NAME_LEN	= strlen(pathname);
+	if(is_inited)
+	{
+		printf("%s11\n",pathname);
+		int pid = getpid();
+		printf("%d\n");
+	}
+
 	send_recv(BOTH, TASK_FS, &msg);
 
 	assert(msg.type == SYSCALL_RET);

