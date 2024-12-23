@@ -41,18 +41,11 @@ PUBLIC int open(const char *pathname, int flags)
 	msg.PATHNAME	= (void*)pathname;
 	msg.FLAGS	= flags;
 	msg.NAME_LEN	= strlen(pathname);
-	if(is_inited)
-	{
-		printf("%s11\n",pathname);
-		int pid = getpid();
-		printf("%d\n",pid);
-	}
-
 	send_recv(BOTH, TASK_FS, &msg);
 
 	assert(msg.type == SYSCALL_RET);
-	msg_log.type = FILE_LOG;
-	msg_log.u.m2.m2p2=" Open file ";
+	msg_log.type = FILE_LOG_OPEN;
+	msg_log.u.m2.m2p2=" File opened ";
 	msg_log.u.m2.m2p3=" fd: ";
     msg_log.u.m1.m1i1=msg.FD;
 	send_recv(SEND, TASK_LOG, &msg_log); 

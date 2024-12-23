@@ -186,8 +186,8 @@ PUBLIC int do_open()
 				if(!(pathname == "/dev_tty0"))
 					{			
 					MESSAGE msg,msg_log;
-					msg_log.type = FILE_LOG;
-					msg_log.u.m2.m2p2=" Create file ";
+					msg_log.type = FILE_LOG_OPEN;
+					msg_log.u.m2.m2p2=" File created by file system ";
 					msg_log.u.m2.m2p3=" fd : ";
         			msg_log.u.m1.m1i1=fd;
 					send_recv(SEND, TASK_LOG, &msg_log); 

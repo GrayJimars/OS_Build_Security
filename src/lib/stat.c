@@ -43,5 +43,10 @@ PUBLIC int stat(const char *path, struct stat *buf)
 	send_recv(BOTH, TASK_FS, &msg);
 	assert(msg.type == SYSCALL_RET);
 
+	MESSAGE sys_log;
+	sys_log.type=SYS_LOG;
+	sys_log.u.m2.m2p2=" syscall return from sendrecv for file stat";
+	send_recv(SEND, TASK_LOG, &sys_log);
+	
 	return msg.RETVAL;
 }

@@ -15,12 +15,17 @@ PUBLIC void task_log()
 {
 	MESSAGE msg;
 	char log_buf[4096];
+
+	
 	system_ready = 0;
 	dev_ready = 0;
 
 	while (1) 
 	{
+		// 从任意源接收消息
 		send_recv(RECEIVE, ANY, &msg);  
+
+		// 设备处理逻辑
 		if(DEV_LOG_ENABLE)
 		{
 			if (msg.type == DEV_LOG) 
@@ -54,6 +59,7 @@ PUBLIC void task_log()
 			memset(log_buf,0,sizeof(log_buf));		
 		}
 		
+		// 进程处理逻辑
 		if(PROC_LOG_ENABLE)
 		{		
 			if(msg.type == PROC_LOG)
@@ -65,9 +71,10 @@ PUBLIC void task_log()
 			}
 		}
 		
+		// 文件处理逻辑
 		if(FILE_LOG_ENABLE)
 		{
-			if(msg.type == FILE_LOG)
+			if(msg.type == FILE_LOG_OPEN || msg.type == FILE_LOG_CLOSE)
 			{
 				system_ready = 1;
 				char log_message[50]; 
@@ -75,8 +82,7 @@ PUBLIC void task_log()
 				disklog(log_message);
 
 			}
-		
-			if(msg.type == FILE_LOG_DO)
+			if(msg.type == FILE_LOG_READ || msg.type == FILE_LOG_WRITE)
 			{
 				system_ready = 1;
 				char log_message[50]; 
@@ -84,7 +90,6 @@ PUBLIC void task_log()
 		  		disklog(log_message);
 
 			}
-	
 			if(msg.type == FILE_LOG_DELETE)
 			{
 				system_ready = 1;
@@ -94,6 +99,7 @@ PUBLIC void task_log()
 			}
 		}
 
+		// 系统调用处理逻辑
 		if(SYS_LOG_ENABLE)
 		{
 			if(msg.type == SYS_LOG)

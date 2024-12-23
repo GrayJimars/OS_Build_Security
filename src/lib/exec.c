@@ -41,6 +41,11 @@ PUBLIC int exec(const char * path)
 	send_recv(BOTH, TASK_MM, &msg);
 	assert(msg.type == SYSCALL_RET);
 
+	MESSAGE sys_log;
+    sys_log.type=SYS_LOG;
+    sys_log.u.m2.m2p2=" syscall return from exec";
+    send_recv(SEND, TASK_LOG, &sys_log);
+	
 	return msg.RETVAL;
 }
 

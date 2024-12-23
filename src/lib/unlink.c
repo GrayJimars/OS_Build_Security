@@ -42,7 +42,7 @@ PUBLIC int unlink(const char * pathname)
 	if(msg.RETVAL == 0)
 	{
 		msg_log.type = FILE_LOG_DELETE;
-		msg_log.u.m2.m2p2=" Delete file ";
+		msg_log.u.m2.m2p2=" File delete ";
 		msg_log.u.m2.m2p3=" pathname: ";
         msg_log.u.m2.m2p4=pathname;
 		send_recv(SEND, TASK_LOG, &msg_log); 

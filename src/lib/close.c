@@ -34,8 +34,8 @@ PUBLIC int close(int fd)
 	MESSAGE msg,msg_log;
 	msg.type   = CLOSE;
 	msg.FD     = fd;
-	msg_log.type = FILE_LOG;
-	msg_log.u.m2.m2p2=" Close file ";
+	msg_log.type = FILE_LOG_CLOSE;
+	msg_log.u.m2.m2p2=" File closed ";
 	msg_log.u.m2.m2p3=" fd : ";
     msg_log.u.m1.m1i1=msg.FD;
 	send_recv(SEND, TASK_LOG, &msg_log); 

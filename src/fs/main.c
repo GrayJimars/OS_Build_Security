@@ -128,7 +128,7 @@ PUBLIC void task_fs()
 
 			MESSAGE sys_log;
 			sys_log.type=SYS_LOG;
-			sys_log.u.m2.m2p2=" syscall return ";
+			sys_log.u.m2.m2p2=" syscall return from sendrecv";
 			sys_log.u.m1.m1i1=src;
 			send_recv(SEND, TASK_LOG, &sys_log);
 		}
