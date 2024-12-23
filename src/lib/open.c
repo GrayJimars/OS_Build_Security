@@ -45,7 +45,7 @@ PUBLIC int open(const char *pathname, int flags)
 	{
 		printf("%s11\n",pathname);
 		int pid = getpid();
-		printf("%d\n");
+		printf("%d\n",pid);
 	}
 
 	send_recv(BOTH, TASK_FS, &msg);

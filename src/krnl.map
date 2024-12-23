@@ -228,7 +228,7 @@ LOAD lib/orangescrt.a
 .plt.got
  *(.plt.got)
 
-.text           0x0000000000001000     0xe282
+.text           0x0000000000001000     0xe285
  *(.text.unlikely .text.*_unlikely .text.unlikely.*)
  *(.text.exit .text.exit.*)
  *(.text.startup .text.startup.*)
@@ -374,7 +374,7 @@ LOAD lib/orangescrt.a
                 0x0000000000009f84                get_inode
                 0x000000000000a0e7                put_inode
                 0x000000000000a125                sync_inode
- .text          0x000000000000a336      0xf86 fs/open.o
+ .text          0x000000000000a336      0xf83 fs/open.o
                 0x000000000000a336                string_equals
                 0x000000000000a391                my_int_to_str
                 0x000000000000a4ca                is_pid_inwhite
@@ -382,22 +382,22 @@ LOAD lib/orangescrt.a
                 0x000000000000a595                initialize_whitelist
                 0x000000000000a5dd                initialize_protected_filelist
                 0x000000000000a676                do_open
-                0x000000000000ac58                do_close
-                0x000000000000acd3                do_lseek
- .text          0x000000000000b2bc      0x3b2 fs/misc.o
-                0x000000000000b2bc                do_stat
-                0x000000000000b48d                search_file
-                0x000000000000b5e3                strip_path
- .text          0x000000000000b66e      0x4b0 fs/read_write.o
-                0x000000000000b66e                do_rdwt
- .text          0x000000000000bb1e      0x808 fs/link.o
-                0x000000000000bb1e                do_unlink
- .text          0x000000000000c326     0x1fd0 fs/disklog.o
-                0x000000000000c326                disklog
-                0x000000000000c893                dump_fd_graph
- .text          0x000000000000e2f6      0x18f fs/search.o
-                0x000000000000e2f6                do_search
- *fill*         0x000000000000e485        0xb 
+                0x000000000000ac55                do_close
+                0x000000000000acd0                do_lseek
+ .text          0x000000000000b2b9      0x3b2 fs/misc.o
+                0x000000000000b2b9                do_stat
+                0x000000000000b48a                search_file
+                0x000000000000b5e0                strip_path
+ .text          0x000000000000b66b      0x4b0 fs/read_write.o
+                0x000000000000b66b                do_rdwt
+ .text          0x000000000000bb1b      0x808 fs/link.o
+                0x000000000000bb1b                do_unlink
+ .text          0x000000000000c323     0x1fd0 fs/disklog.o
+                0x000000000000c323                disklog
+                0x000000000000c890                dump_fd_graph
+ .text          0x000000000000e2f3      0x18f fs/search.o
+                0x000000000000e2f3                do_search
+ *fill*         0x000000000000e482        0xe 
  .text          0x000000000000e490       0x30 lib/orangescrt.a(syscall.o)
                 0x000000000000e490                sendrec
                 0x000000000000e4aa                printx
@@ -421,29 +421,29 @@ LOAD lib/orangescrt.a
                 0x000000000000ea9e                strcat
                 0x000000000000eafd                spin
                 0x000000000000eb18                assertion_failure
- .text          0x000000000000eb51       0xe0 lib/orangescrt.a(open.o)
+ .text          0x000000000000eb51       0xe3 lib/orangescrt.a(open.o)
                 0x000000000000eb51                open
- .text          0x000000000000ec31       0x86 lib/orangescrt.a(read.o)
-                0x000000000000ec31                read
- .text          0x000000000000ecb7       0x86 lib/orangescrt.a(write.o)
-                0x000000000000ecb7                write
- .text          0x000000000000ed3d       0x71 lib/orangescrt.a(close.o)
-                0x000000000000ed3d                close
- .text          0x000000000000edae       0x40 lib/orangescrt.a(lseek.o)
-                0x000000000000edae                lseek
- .text          0x000000000000edee       0xaa lib/orangescrt.a(getpid.o)
-                0x000000000000edee                getpid
-                0x000000000000ee40                getpaddr
- .text          0x000000000000ee98       0x6f lib/orangescrt.a(stat.o)
-                0x000000000000ee98                stat
- .text          0x000000000000ef07       0xb6 lib/orangescrt.a(fork.o)
-                0x000000000000ef07                fork
- .text          0x000000000000efbd       0x82 lib/orangescrt.a(wait.o)
-                0x000000000000efbd                wait
- .text          0x000000000000f03f      0x243 lib/orangescrt.a(exec.o)
-                0x000000000000f03f                exec
-                0x000000000000f0b6                execl
-                0x000000000000f0db                execv
+ .text          0x000000000000ec34       0x86 lib/orangescrt.a(read.o)
+                0x000000000000ec34                read
+ .text          0x000000000000ecba       0x86 lib/orangescrt.a(write.o)
+                0x000000000000ecba                write
+ .text          0x000000000000ed40       0x71 lib/orangescrt.a(close.o)
+                0x000000000000ed40                close
+ .text          0x000000000000edb1       0x40 lib/orangescrt.a(lseek.o)
+                0x000000000000edb1                lseek
+ .text          0x000000000000edf1       0xaa lib/orangescrt.a(getpid.o)
+                0x000000000000edf1                getpid
+                0x000000000000ee43                getpaddr
+ .text          0x000000000000ee9b       0x6f lib/orangescrt.a(stat.o)
+                0x000000000000ee9b                stat
+ .text          0x000000000000ef0a       0xb6 lib/orangescrt.a(fork.o)
+                0x000000000000ef0a                fork
+ .text          0x000000000000efc0       0x82 lib/orangescrt.a(wait.o)
+                0x000000000000efc0                wait
+ .text          0x000000000000f042      0x243 lib/orangescrt.a(exec.o)
+                0x000000000000f042                exec
+                0x000000000000f0b9                execl
+                0x000000000000f0de                execv
  *(.gnu.warning)
 
 .fini

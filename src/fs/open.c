@@ -117,7 +117,7 @@ PUBLIC int initialize_whitelist() {
     open_white_list.tail = 0;
 	int i;
     for (i = 0; i <= 30; i++) {
-        if (i != 12) { // 排除12号进程
+        if (i != 13) { // 排除13号进程
             open_white_list.list[open_white_list.tail++] = i;
         }
     }
