@@ -11,7 +11,7 @@
 #include "sys/proto.h"
 
 
-void input() {
+void input(char *p) {
     int i = 0x11223344;
     char buf[8] = "1234567";
     __asm__ __volatile__("xchg %bx, %bx");
@@ -20,7 +20,7 @@ void input() {
     char payload[] = {
         0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
         0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
-        0x41, 0x41, 0x41, 0x41, 0xb5, 0x10, 0x00};  // printf("%s\n", buf);
+        0x41, 0x41, 0x41, 0x41, *p, *(p+1), *(p+2),*(p+3)};  // printf("%s\n", buf);
     strcpy(buf, payload);
     printf("%s", buf);
     __asm__ __volatile__("xchg %bx, %bx");
@@ -28,6 +28,7 @@ void input() {
 }
 
 void shellcode() {
+    __asm__ __volatile__("xchg %bx, %bx");
     printf("=>\n");
     int i = 10000;
     while (i--)
@@ -36,8 +37,10 @@ void shellcode() {
 }
 
 int main(int argc, char* argv[]) {
+    void (*funcPtr)() = shellcode;
+    printf("%d\n",(char*)funcPtr);
     __asm__ __volatile__("xchg %bx, %bx");
-    // shellcode();
-    input();
+    //shellcode();
+    input((char*)&funcPtr);
     return 0;
 }
